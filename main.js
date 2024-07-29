@@ -38,11 +38,13 @@ document.addEventListener('click', function(card) {
         if (counter === numOfCards) {
             const board = document.getElementsByClassName('game-board')[0]; 
             board.style.pointerEvents = 'none';
-            gameHistory = new Set(JSON.parse(localStorage.getItem('numbersSet')) || []);
+            gameHistory = JSON.parse(localStorage.getItem('numbersSet')) || [];
             gameHistory.forEach(e => {
                 e.success = e.option1 === e.option2;
             });
+            localStorage.setItem('gameHistory', JSON.stringify(gameHistory));
             document.querySelector('.result').style.display = 'inline';
+            showResult();
         }
     }
 });
@@ -104,9 +106,8 @@ if (localStorage.length === 0) {
 
     const worood = new Set(JSON.parse(localStorage.getItem('numbersSet')) || []);
     const allCards = document.querySelectorAll('.board-item');
-    console.log(worood);
+    console.log(worood); ////////////////////////////////////////
     Array.from(worood).forEach(index => {
-        console.log(allCards[index]);
         allCards[index].classList.add('flipped');
     });
     // filling the cards with numbers
@@ -121,11 +122,9 @@ if (localStorage.length === 0) {
     document.querySelector('.players button').style.display = 'none';
     document.getElementById('player1').style.borderColor = 'red';
 
-    // const istoryData = localStorage.getItem('gameHistory');
-    // const his = JSON.parse(istoryData);
-    // console.log(his)
-    // console.table(his);
-    gameHistory = new Set(JSON.parse(localStorage.getItem('numbersSet')) || []);
+    const istoryData = localStorage.getItem('gameHistory');
+    gameHistory = JSON.parse(istoryData);
+
     const playerData = localStorage.getItem('checkPlayer');
     checkPlayer = JSON.parse(playerData);
 
@@ -138,8 +137,11 @@ if (localStorage.length === 0) {
         document.getElementById('player1').style.borderColor = whiteColor; 
         document.getElementById('player2').style.borderColor = redColor; 
     }
-    counter = JSON.parse(localStorage.getItem('counter'));
-    alert(counter);
+    counter = JSON.parse(localStorage.getItem('counter')) || 0;
+    if(counter === numOfCards){
+        showResult();
+    }
+    gameHistory = JSON.parse(localStorage.getItem('gameHistory')) || [];
 }
 
 function resetGame(){
@@ -198,17 +200,14 @@ function flipCardTwo(parentElemen, color1, color2, numOfPlayer){
     let numbersSet = new Set(JSON.parse(localStorage.getItem('numbersSet')) || []);
     numbersSet.add(indexCard2);
     numbersSet.add(indexCard2);
-    console.log('hi2 => '+ [...numbersSet]);
     
     checkCard = false;
-    // localStorage.setItem('checkCard', JSON.stringify(checkCard));
     if(value1 == value2){
         counter+=2;
         localStorage.setItem('counter', JSON.stringify(counter));
         let numbersSet = new Set(JSON.parse(localStorage.getItem('numbersSet')) || []);
         numbersSet.add(indexCard1);
         numbersSet.add(indexCard2);
-        console.log('hi2 => '+ [...numbersSet]);
         localStorage.setItem('numbersSet', JSON.stringify([...numbersSet]));  
     }else{
         setTimeout(() => {
@@ -219,7 +218,7 @@ function flipCardTwo(parentElemen, color1, color2, numOfPlayer){
 
     document.getElementById('player1').style.borderColor = color1; 
     document.getElementById('player2').style.borderColor = color2; 
-    gameHistory = new Set(JSON.parse(localStorage.getItem('numbersSet')) || []);
-    gameHistory.add({player: numOfPlayer, option1: value1, option2: value2, card1: indexCard1, card2: indexCard2}); 
+    gameHistory = JSON.parse(localStorage.getItem('gameHistory')) || [];
+    gameHistory.push({player: numOfPlayer, option1: value1, option2: value2, card1: indexCard1, card2: indexCard2}); 
     localStorage.setItem('gameHistory', JSON.stringify(gameHistory));
 }
