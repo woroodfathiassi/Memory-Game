@@ -47,11 +47,13 @@ h1{
     font-weight: bold;
     background-color: transparent;
     border: 0px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.607);
+    border: 2px solid rgba(255, 255, 255, 0.607);
+    border-radius: 7px;
     width: 150px;
     text-transform: capitalize;
     color: white;
     transition: 2s;
+    padding-left: 10px;
 }
 
 .names input::placeholder{
