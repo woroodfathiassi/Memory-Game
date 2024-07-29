@@ -38,13 +38,12 @@ document.addEventListener('click', function(card) {
         if (counter === numOfCards) {
             const board = document.getElementsByClassName('game-board')[0]; 
             board.style.pointerEvents = 'none';
-            gameHistory = JSON.parse(localStorage.getItem('numbersSet')) || [];
+            // gameHistory = JSON.parse(localStorage.getItem('numbersSet')) || [];
             gameHistory.forEach(e => {
                 e.success = e.option1 === e.option2;
             });
             localStorage.setItem('gameHistory', JSON.stringify(gameHistory));
             document.querySelector('.result').style.display = 'inline';
-            showResult();
         }
     }
 });
@@ -138,9 +137,9 @@ if (localStorage.length === 0) {
         document.getElementById('player2').style.borderColor = redColor; 
     }
     counter = JSON.parse(localStorage.getItem('counter')) || 0;
-    if(counter === numOfCards){
-        showResult();
-    }
+    // if(counter === numOfCards){
+    //     showResult();
+    // }
     gameHistory = JSON.parse(localStorage.getItem('gameHistory')) || [];
 }
 
