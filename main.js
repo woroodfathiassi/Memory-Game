@@ -38,15 +38,17 @@ document.addEventListener('click', function(card) {
         if (counter === numOfCards) {
             const board = document.getElementsByClassName('game-board')[0]; 
             board.style.pointerEvents = 'none';
-            // gameHistory = JSON.parse(localStorage.getItem('numbersSet')) || [];
-            gameHistory.forEach(e => {
-                e.success = e.option1 === e.option2;
-            });
             localStorage.setItem('gameHistory', JSON.stringify(gameHistory));
-            document.querySelector('.result').style.display = 'inline';
+
+            showResult();
         }
     }
 });
+
+// Check if localStorage is empty or not
+if (localStorage.length !== 0) {    
+    reloadThePage();
+}
 
 function shuffleArray(array) {
     for (let i = array.length - 1; i > 0; i--) {
@@ -63,11 +65,7 @@ function displayBorad(){
         playersName.push(name1);
         playersName.push(name2);
         localStorage.setItem('playersName', JSON.stringify(playersName));
-        document.querySelector('.game-board').style.display = 'grid';
-        for(let i=0 ; i<numOfCards ; i++){
-            const card = createBoardItem();
-            document.querySelector('.game-board').appendChild(card);
-        }
+        gameBoard();
         const items = document.getElementsByClassName('back');
         let count = 0;
         // filling the cards with numbers
@@ -84,65 +82,6 @@ function displayBorad(){
     }
 }
 
-// Check if localStorage is empty or not
-if (localStorage.length === 0) {
-    // displayBorad();
-    
-} else {
-    const nameData = localStorage.getItem('playersName');
-    const pName = JSON.parse(nameData);
-    document.getElementById('player1').value = pName[0];
-    document.getElementById('player2').value = pName[1];
-
-    document.querySelector('.game-board').style.display = 'grid';
-    for(let i=0 ; i<numOfCards ; i++){
-        const card = createBoardItem();
-        document.querySelector('.game-board').appendChild(card);
-    }
-    const items = document.getElementsByClassName('back');
-    const itemsArray = Array.from(items);
-    let count = 0;
-
-    const worood = new Set(JSON.parse(localStorage.getItem('numbersSet')) || []);
-    const allCards = document.querySelectorAll('.board-item');
-    console.log(worood); ////////////////////////////////////////
-    Array.from(worood).forEach(index => {
-        allCards[index].classList.add('flipped');
-    });
-    // filling the cards with numbers
-    const shuffledArray = JSON.parse(localStorage.getItem('shuffledArray'));
-    Array.from(items).forEach(item => {
-        item.innerHTML = shuffledArray[count];
-        count++;
-    });
-
-
-    document.querySelector('.names input').readOnly = true;
-    document.querySelector('.players button').style.display = 'none';
-    document.getElementById('player1').style.borderColor = 'red';
-
-    const istoryData = localStorage.getItem('gameHistory');
-    gameHistory = JSON.parse(istoryData);
-
-    const playerData = localStorage.getItem('checkPlayer');
-    checkPlayer = JSON.parse(playerData);
-
-    const playData = localStorage.getItem('play');
-    const play = JSON.parse(playData);
-    if(!checkPlayer){
-        document.getElementById('player1').style.borderColor = redColor; 
-        document.getElementById('player2').style.borderColor = whiteColor; 
-    }else{
-        document.getElementById('player1').style.borderColor = whiteColor; 
-        document.getElementById('player2').style.borderColor = redColor; 
-    }
-    counter = JSON.parse(localStorage.getItem('counter')) || 0;
-    // if(counter === numOfCards){
-    //     showResult();
-    // }
-    gameHistory = JSON.parse(localStorage.getItem('gameHistory')) || [];
-}
-
 function resetGame(){
     localStorage.clear();
     location.reload();
@@ -154,18 +93,24 @@ function showResult(){
     }, 800);
 }
 
+function allGames(){
+    setTimeout(() => {
+        window.location.href = 'allResults.html';
+    }, 800);
+}
+
 function createBoardItem(){
     const item = document.createElement('div');
     item.classList.add('board-item');
 
     const front = document.createElement('div');
     front.classList.add('front');
-
+    
     const back = document.createElement('div');
     back.classList.add('back');
-
+    
     item.append(front, back);
-
+    
     return item;
 }
 
@@ -176,7 +121,7 @@ function createArrayOfNumbers(num){
             numbers.push(j);
         }
     }
-
+    
     const shuffledArray = shuffleArray(numbers);
     console.log(shuffledArray);
     localStorage.setItem('shuffledArray', JSON.stringify(shuffledArray));
@@ -214,10 +159,73 @@ function flipCardTwo(parentElemen, color1, color2, numOfPlayer){
             tempElemetOne.classList.remove('flipped'); 
         }, 500);
     }
-
+    
     document.getElementById('player1').style.borderColor = color1; 
     document.getElementById('player2').style.borderColor = color2; 
     gameHistory = JSON.parse(localStorage.getItem('gameHistory')) || [];
     gameHistory.push({player: numOfPlayer, option1: value1, option2: value2, card1: indexCard1, card2: indexCard2}); 
     localStorage.setItem('gameHistory', JSON.stringify(gameHistory));
+}
+
+function reloadThePage(){
+    // get players name:
+    const nameData = localStorage.getItem('playersName');
+    const pName = JSON.parse(nameData);
+    document.getElementById('player1').value = pName[0];
+    document.getElementById('player2').value = pName[1];
+    
+    gameBoard();
+
+    const items = document.getElementsByClassName('back');
+    const itemsArray = Array.from(items);
+    let count = 0;
+    
+    const flippedCards = new Set(JSON.parse(localStorage.getItem('numbersSet')) || []);
+    const allCards = document.querySelectorAll('.board-item');
+    Array.from(flippedCards).forEach(index => {
+        allCards[index].classList.add('flipped');
+    });
+    // filling the cards with numbers
+    const shuffledArray = JSON.parse(localStorage.getItem('shuffledArray'));
+    Array.from(items).forEach(item => {
+        item.innerHTML = shuffledArray[count];
+        count++;
+    });
+    
+    document.querySelector('.names input').readOnly = true;
+    document.querySelector('.players button').style.display = 'none';
+    document.getElementById('player1').style.borderColor = 'red';
+
+    updateGameHistory();
+}
+
+function gameBoard(){
+    document.querySelector('.game-board').style.display = 'grid';
+    for(let i=0 ; i<numOfCards ; i++){
+        const card = createBoardItem();
+        document.querySelector('.game-board').appendChild(card);
+    }
+}
+
+function updateGameHistory(){
+    const istoryData = localStorage.getItem('gameHistory');
+    gameHistory = JSON.parse(istoryData);
+    
+    const playerData = localStorage.getItem('checkPlayer');
+    checkPlayer = JSON.parse(playerData);
+    
+    const playData = localStorage.getItem('play');
+    const play = JSON.parse(playData);
+    if(!checkPlayer){
+        document.getElementById('player1').style.borderColor = redColor; 
+        document.getElementById('player2').style.borderColor = whiteColor; 
+    }else{
+        document.getElementById('player1').style.borderColor = whiteColor; 
+        document.getElementById('player2').style.borderColor = redColor; 
+    }
+    counter = JSON.parse(localStorage.getItem('counter')) || 0;
+    if(counter === numOfCards){
+        showResult();
+    }
+    gameHistory = JSON.parse(localStorage.getItem('gameHistory')) || [];
 }

@@ -24,19 +24,21 @@
     </div>
     <button style="margin: 15px;" onclick="playAgain();">Play Again</button>
   </div>
-  <script>
+  <script type="module">
+    import { insertGameScore } from './dbconfig.js';
+    
     // Retrieve data from local storage
     const dataString = localStorage.getItem('gameHistory');
     const names = localStorage.getItem('playersName');
-  
+    
     // Parse JSON string back to object
     const historyData = JSON.parse(dataString);
     const namesData = JSON.parse(names);
-
+    
     let score1 = 0;
     let score2 = 0;
     historyData.forEach(element => {
-      if (element.success) {
+      if (element.option1 == element.option2) {
         if (element.player === 'one') {
           score1++;
         } else {
@@ -44,10 +46,11 @@
         }
       }
     });
+    insertGameScore(namesData[0], namesData[1], score1, score2);
     if (score1 > score2) {
         document.querySelector('h2').innerHTML = `Winner is ${namesData[0]}`;
         document.querySelector('.score').innerHTML = `${score1}`;
-    } else {
+      } else {
         document.querySelector('h2').innerHTML = `Winner is ${namesData[1]}`;
         document.querySelector('.score').innerHTML = `${score2}`;
     }
@@ -56,11 +59,11 @@
     let isPlayer1 = true;
     historyData.forEach(elemet => {
       if(isPlayer1){
-        const row = createRow(namesData[0], elemet.card1, elemet.card2, elemet.success);
+        const row = createRow(namesData[0], elemet.card1, elemet.card2, elemet.option1==elemet.option2);
         document.querySelector('table').appendChild(row);
         isPlayer1 = false;
       }else{
-        const row = createRow(namesData[1], elemet.card1, elemet.card2, elemet.success);
+        const row = createRow(namesData[1], elemet.card1, elemet.card2, elemet.option1==elemet.option2);
         document.querySelector('table').appendChild(row);
         isPlayer1 = true;
       }
@@ -78,11 +81,11 @@
       tr.append(td1);
       tr.append(td2);
       tr.append(td3);
-
+      
       return tr;
     }
 
-    function playAgain(){
+    window.playAgain = function() {
       localStorage.clear();
       window.location.href = 'home.html';
     }
