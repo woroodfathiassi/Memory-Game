@@ -1,12 +1,5 @@
-// import { createClient } from 'jsr:@supabase/supabase-js@2'
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
-// require('dotenv').config();
-// import { createClient } from '@supabase/supabase-js';
-// import dotenv from 'dotenv';
 
-// dotenv.config();
-// const supabaseUrl = process.env.SUPABASE_URL
-// const supabaseKey = process.env.SUPABASE_KEY
 const supabaseUrl = 'https://gopgepoflqdjcitxqxbk.supabase.co'
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdvcGdlcG9mbHFkamNpdHhxeGJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjIzMjA5MTQsImV4cCI6MjAzNzg5NjkxNH0.q73Oyfyo4I8dVZpEy7mxJzLubUM_ULp6zuDiD4dJIq0'
 const supabase = createClient(supabaseUrl, supabaseKey);
